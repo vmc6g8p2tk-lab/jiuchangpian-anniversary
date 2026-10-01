@@ -23,5 +23,5 @@ export const invitation = {
   event: { kicker: 'YOU ARE INVITED', title: '诚挚邀请您', subtitle: '共赴旧唱片一周年之约', fields: { date: '日期', time: '时间', venue: '地点', address: '地址' }, date: '待定', time: '待定', venue: '待定', address: '待定', contact: '', phone: '', navigationUrl: '', copy: ['这一晚，', '我们不只庆祝一周年，', '也想和一路同行的朋友，', '再喝一杯，再听一首歌。'], closing: '期待您的到来。', ticketTitle: '老友入场券', ticketNumber: 'NO. 0001', addressLabel: '相聚的地方', contactLabel: '联系人 / 电话' },
   ending: { kicker: 'SIDE B / THE NEXT RECORD', anniversary: '一周年', title: '故事未完，', lines: ['下一面唱片，', '继续与你一起播放。'], english: 'THANK YOU FOR BEING WITH US.', dateLabel: '周年日期', signoff: '留一个位置，给老朋友。' },
   music: { src: 'assets/audio/background.wav', label: '原创合成吉他氛围 · Demo', enabled: true, volume: 0.3 },
-  share: { title: '旧唱片江景民谣 · 1周年庆电子邀请函', description: '唱针转过一圈，我们一起走过一年。诚挚邀请您，共赴旧唱片一周年之约。', image: 'share-cover.jpg', siteUrl: 'https://old-record-first-anniversary.ivory-ring-6744.chatgpt.site/' },
+  share: { title: '旧唱片江景民谣 · 1周年庆电子邀请函', description: '唱针转过一圈，我们一起走过一年。诚挚邀请您，共赴旧唱片一周年之约。', image: 'share-cover.jpg', siteUrl: 'https://old-record-first-anniversary.fgvsvf54vt.chatgpt.site/' },
 } as const
