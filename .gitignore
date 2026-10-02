@@ -4,6 +4,36 @@ test-results/
 playwright-report/
 .sites-runtime/
 .env*
-!.env.example
 artifacts/
 *.tsbuildinfo
+
+# 凭据与证书（只提交无密钥的项目代码和素材）
+.npmrc
+.netrc
+.git-credentials
+credentials*
+secrets*
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+
+# 本地临时文件、编辑器缓存、打包产物
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.tar.gz
+*.zip
+.cache/
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -4,6 +4,8 @@ import { invitation } from './src/config/invitation'
 
 const escape = (text: string) => text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
 export default defineConfig({
+  // 相对资源路径同时适用于域名根目录和 /jiuchangpian-anniversary/。
+  // public 图片/音频也通过 import.meta.env.BASE_URL 读取，避免指向站点根目录。
   base: './',
   plugins: [react(), {
     name: 'invitation-metadata',

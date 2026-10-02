@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:deployment": "node scripts/verify-subpath.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.0",

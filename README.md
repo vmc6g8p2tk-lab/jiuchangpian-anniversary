@@ -56,6 +56,8 @@ docs/                       素材清单、部署和微信说明
 
 `npm run build` 输出 **dist/**。可把 dist 全部内容上传到支持 HTTPS 的静态托管（Nginx、腾讯云/阿里云对象存储加 CDN、Cloudflare Pages 等）。此项目只有根页面，不需要 SPA 路由回退。Vite base 为 ./，可部署域名根路径或子目录；不要只上传 index.html。`npm run preview` 仅验证构建结果，不是生产服务器。
 
+Gitee 仓库及 `/jiuchangpian-anniversary/` 子路径部署说明见 [Gitee 部署文档](docs/GITEE_PAGES.md)。构建后执行 `npm run test:deployment`，会用真实 Chrome 检查构建产物在该子路径下的资源加载与交互。
+
 上线步骤：确定域名和 HTTPS → 配置 share.siteUrl → 替换真实素材和活动信息 → lint/typecheck/test/build → 上传 dist → 检查根页面、图片、音频和分享封面 → 用微信/iOS/Android 实机验证并发送链接。中国大陆服务器和自有域名可能涉及备案，以托管商要求为准。
 
 如当前目录有 .openai/hosting.json，表示已注册 Sites 部署身份；使用 Sites 插件管理发布。它不影响标准 Vite 构建或迁移到其他静态托管，不要提交 token/secret。
