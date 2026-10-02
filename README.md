@@ -1,19 +1,20 @@
-# 旧唱片江景民谣 · 1周年庆电子邀请函
+# 旧唱片｜1周年庆电子邀请函 V2
 
-V1 风格确认 Demo。交付目标：2026-10-20。Vite + React + TypeScript + CSS + Framer Motion，无后台、数据库或账号系统。旧纸张、黑胶、唱针、旧照片和酒红色票根组成六个连续章节。
+Vite + React + TypeScript + CSS + Framer Motion。六章：周年黑胶封套、纪念内页、照片档案、暗红演出海报、入场券、黑胶收尾。周年日期10月28日；按2026年10月21日前交付规划，10月20日内部发布检查。
 
 ## 安装与运行
 
-需要 Node.js 20.19+ 或 22.12+（本地使用 Node.js 24）。在本项目目录执行：
+建议 Node.js 24；支持 Vite 要求的20.19+ / 22.12+。
 
 ```bash
 npm install
 npm run dev
 ```
 
-默认访问 http://localhost:5173 。开发服务器监听 0.0.0.0，同一 Wi-Fi 的手机可访问终端输出的 Network 地址；若受 Windows 防火墙拦截，请开放对应端口。按 Ctrl+C 停止。
+默认 http://localhost:5173/。本次 V2 预览使用 http://localhost:5174/，避免占用旧预览。同一局域网手机可使用终端 Network 地址，访问还取决于网络和防火墙。
 
 ```bash
+npm ci
 npm run lint
 npm run typecheck
 npm run test
@@ -21,55 +22,60 @@ npm run build
 npm run preview
 ```
 
-测试使用已安装的 Chrome；无 Chrome 的机器可安装 Chrome，或把 playwright.config.ts 的 channel 去掉后执行 `npx playwright install chromium`。测试覆盖三种手机宽度、章节切换、照片弹窗、音乐成功/拒绝、暂停续播、减少动画及资源。报告位于 playwright-report，截图位于 artifacts。真实微信和 iPhone 的设备测试仍须上线后进行。
+Playwright 使用本机 Chrome，默认在5174启动或复用本项目服务，可用 PLAYWRIGHT_PORT 修改。没有 Chrome 时安装 Chrome，或删除 channel 并安装 Playwright Chromium。测试报告在 playwright-report/，截图在 artifacts/v2/。本机安全软件注入 Kaspersky 脚本，测试仅隔离该已确认的外部源，不过滤项目错误。tests/fixtures/ 是独立相册测试入口，不进入生产 dist。
 
-## 内容和素材替换
+## 文字、时间和地点
 
-所有客户内容集中在 **src/config/invitation.ts**：brand 品牌和 Logo、cover 封面、story 品牌故事、gallery 照片、celebration 节目、event 时间地址联系方式、ending 结尾、music 音乐、share 分享信息、ui 交互文字。修改后保存即更新；上线前重新构建。活动日期与交付截止日期分别管理，当前活动日期为待定。
+所有业务内容在 src/config/invitation.ts：brand、cover、story、gallery、celebration、event、ending、music、share、ui。店名“旧唱片”；event.date 统一提供首页、票根和结尾日期。时间、地址、联系人、电话、地图未提供，统一“待确认”。phone/navigationUrl 为空时禁用按钮，不生成假链接。celebration.pending=true 会明确提示活动暂定；客户确认后再更新状态。活动日期和交付日期分别管理，不猜测星期。
 
-图片放 **public/assets/images/**。将 gallery.photos 的 src、alt、caption 改为实际图片；收到正式照片后把 placeholder 设置为空字符串，去除占位标签。照片数组可增减，但 V1 的错落构图按三张设计，更多照片建议替换精选三张或调整样式。story.photo 是故事页照片。brand.logo 支持透明 PNG/SVG。图片建议 1200px 内、单图 150–250KB，首屏使用 CSS 黑胶，无大图下载。
+## Logo、照片、音乐
 
-WebP/AVIF 优化：把 JPG/PNG 放入图片目录，执行 `node scripts/optimize-images.mjs`，再在 gallery.photos 各项填写 webp 和 avif 路径；picture 会优先 AVIF，再 WebP，最后 src。脚本保留原图，并自动旋转、限制宽度。SVG Demo 素材不需要转码。图片 lazy loading、固定宽高和 decoding=async；不要使用 base64 大图。
+客户原图和视频保留本地 client-reference/，已 Git 忽略且不进入 dist。public/assets/images/brand-logo.png 是1133×230白色透明 PNG，原图完整保留，无裁切、改字、改色、反色或重绘。原图内部含“旧唱片江景民谣”，属于客户原版组合标志，不能按旧品牌搜索擅自改字；网页店名仍为“旧唱片”。浅色页用深色底牌，白字不消失。
 
-背景音乐放 **public/assets/audio/**，修改 music.src（支持 MP3/AAC/WAV）、volume、enabled。直接覆盖 background.wav 也能替换，但内容格式应与扩展名一致。首屏点击开启邀请后尝试播放，右上角唱片可播放/暂停；拒绝播放不阻断浏览，不依赖微信私有自动播放技巧。Demo 音频为本项目原创合成占位曲，正式音乐请提供商用授权。
+BrandLogo 用于顶部、首页、结尾。替换 brand.logo 的 src、alt、width、height；根据新原图检查背景，不添加 invert、圆形裁切或正方形强制尺寸。
 
-分享封面在 **public/share-cover.jpg**。替换同名文件并更新 share.title、description、siteUrl；生产 siteUrl 必须填写完整 HTTPS 地址，构建时会生成绝对 og:image、og:url 和 canonical。HTML 元数据由同一配置生成，不需要手改 index.html。Demo 封面为代码生成图形，含 V1 DEMO 字样，正式上线请替换。
+照片放 public/assets/images/，修改 gallery.photos 的 src、alt、caption；正式照片到位后清空 placeholder。故事照片使用 story.photo。相册按数组长度处理，已验证1/3/5张；更多照片自然延长章节。现有酒吧、江景和演出图是有明确标识的原创占位插画，不是实拍。
 
-## 项目结构
+建议图片1200px内、150–250KB。运行 `node scripts/optimize-images.mjs`，配置 webp/avif，picture 保留原图回退；图片 lazy loading，不使用大图 base64。
 
-```text
-src/config/invitation.ts     集中内容配置
-src/components/              黑胶、图片、动画、音乐
-src/App.tsx                  六章节和照片弹窗
-src/styles.css               响应式、Safe Area、动画
-public/assets/images/        Logo、SVG 占位插画、纸张噪点
-public/assets/audio/         本地音乐
-public/share-cover.jpg       微信分享封面预留
-scripts/                    Demo 素材生成、图片压缩
-tests/                      浏览器自动化验收
-docs/                       素材清单、部署和微信说明
+音乐放 public/assets/audio/，修改 music.src、volume、enabled；格式与扩展名必须一致，建议 MP3/AAC。目前 background.wav 仍为合成 Demo，待客户授权音频。点击开启邀请/音乐按钮后尝试播放，切章不重播，暂停续播保留位置，失败不阻断浏览。
+
+## 分享图和微信
+
+新图 public/share-cover-v2.jpg，1200×630；旧 share-cover.jpg 同步换为新图。Logo、旧唱片、1周年、10月28日在中央方形安全区。`node scripts/generate-share-cover.mjs` 根据集中配置和原版 Logo 生成封面；更换文件名可区分缓存版本。Demo 生成器只写 demo-generated/，绝不覆盖已有文件或 public 正式素材。
+
+Vite 根据 share 生成 title、description、canonical、完整 OG、Twitter Card。默认 siteUrl 使用已有 GitHub 页面；Gitee 发布时用真实 DEPLOY_SITE_URL 覆盖，仓库 URL 不是网页 URL。分享图必须为公网 HTTPS 绝对地址。
+
+本轮仅 HTML/OG/Twitter，没有微信 JS-SDK，不能保证微信一定显示卡片。朋友、朋友圈、粘贴链接分别真机验证。详见 docs/WECHAT_DEPLOYMENT.md。
+
+## 构建和双平台部署
+
+普通 `npm run build` 使用 base='./'，上传整个 dist/ 到 HTTPS 静态托管。目录 URL 应以 / 结尾。本项目仅章节 hash，无需多路由回退。preview 是本地验证，不是公网发布。
+
+GitHub master 工作流保留，设置 DEPLOY_BASE_PATH=/jiuchangpian-anniversary/ 和 DEPLOY_SITE_URL=https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/ 。前者控制资源路径，后者控制 canonical、og:url、绝对分享图。不能把 GitHub 固定子路径产物直接用于不同 Gitee 路径。
+
+普通构建验证（PowerShell）：
+
+```powershell
+npm run build
+$env:VERIFY_MOUNT_PATH='/'
+npm run test:deployment
+$env:VERIFY_MOUNT_PATH='/relative-path-check/'
+npm run test:deployment
 ```
 
-使用 100dvh 容器与 100svh 章节、safe-area-inset、CSS scroll-snap proximity；短手机可在章节内滚动，不裁切内容。支持章节导航、键盘操作和 prefers-reduced-motion。不支持 JS 的浏览器展示提示。
+GitHub 构建验证：
 
-## 构建与部署
+```powershell
+$env:DEPLOY_BASE_PATH='/jiuchangpian-anniversary/'
+$env:DEPLOY_SITE_URL='https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/'
+$env:VERIFY_MOUNT_PATH='/jiuchangpian-anniversary/'
+npm run build
+npm run test:deployment
+```
 
-`npm run build` 输出 **dist/**。可把 dist 全部内容上传到支持 HTTPS 的静态托管（Nginx、腾讯云/阿里云对象存储加 CDN、Cloudflare Pages 等）。此项目只有根页面，不需要 SPA 路由回退。Vite base 为 ./，可部署域名根路径或子目录；不要只上传 index.html。`npm run preview` 仅验证构建结果，不是生产服务器。
-
-Gitee 仓库及 `/jiuchangpian-anniversary/` 子路径部署说明见 [Gitee 部署文档](docs/GITEE_PAGES.md)。构建后执行 `npm run test:deployment`，会用真实 Chrome 检查构建产物在该子路径下的资源加载与交互。
-
-GitHub 仓库 VMC6G8P2TK-Lab/jiuchangpian-anniversary 的 master 自动部署配置见 [GitHub Pages 文档](docs/GITHUB_PAGES.md)。GitHub 工作流通过 DEPLOY_BASE_PATH、DEPLOY_SITE_URL 指定项目子路径和分享地址；不设置变量时仍保留本地/Gitee 的相对路径构建。首次使用请在 GitHub 仓库 Settings → Pages 中将 Source 设为 GitHub Actions。
-
-上线步骤：确定域名和 HTTPS → 配置 share.siteUrl → 替换真实素材和活动信息 → lint/typecheck/test/build → 上传 dist → 检查根页面、图片、音频和分享封面 → 用微信/iOS/Android 实机验证并发送链接。中国大陆服务器和自有域名可能涉及备案，以托管商要求为准。
-
-如当前目录有 .openai/hosting.json，表示已注册 Sites 部署身份；使用 Sites 插件管理发布。它不影响标准 Vite 构建或迁移到其他静态托管，不要提交 token/secret。
-
-## 微信分享
-
-普通 HTTPS 网页能在微信内打开，与“自定义微信分享卡片”是两件事。基础 title/description/OG 已设置，**没有接入或伪造微信公众号/JSSDK 能力**。如需稳定的微信自定义卡片，请阅读 [微信部署说明](docs/WECHAT_DEPLOYMENT.md)，需客户提供合适公众号、域名及服务端签名条件。公众号密钥禁止写入前端。没有这些条件也能正常浏览、播放音乐、分享普通链接。
+恢复普通构建，移除两个 DEPLOY 环境变量，再 build。VERIFY_MOUNT_PATH 仅控制测试挂载。/relative-path-check/ 是本地兼容验证路径，不是猜测的 Gitee 地址。Gitee 真实 URL 仍需提供。见 docs/GITEE_PAGES.md、docs/GITHUB_PAGES.md。
 
 ## 正式交付前
 
-当前日期、时间、地点、地址、联系人和电话均为待定；导航和电话按钮禁用，填入 event.navigationUrl/phone 后自动启用。Logo 为唱片占位标记，环境/江景/舞台是原创 SVG 占位插画，并非酒吧实拍。
-
-请按 [客户素材清单](docs/ASSETS_REQUIRED.md) 提供正式素材和最终文案。2026-10-20 前还需客户确认风格、核实活动信息，完成真实手机/微信分享及音频验证。
+仍缺正式照片、音乐、开始时间、地址、联系人、电话、地图和活动确认。客户素材清单见 docs/ASSETS_REQUIRED.md。历史 V1 验收保留 docs/ACCEPTANCE.md，V2 记录 docs/V2_ACCEPTANCE.md。代码完成、本地验证、线上验证分开记录。本轮不 commit、不 push、不修改 remote、不发布新线上版本。

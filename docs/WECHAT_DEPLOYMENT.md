@@ -4,7 +4,7 @@
 
 该项目输出静态 HTML/CSS/JS，无需公众号即可通过 HTTPS 链接在微信内打开。音乐从用户点击开启邀请或唱片按钮开始尝试播放，iOS/微信可能仍拒绝，浏览不受影响。点击右上角可再次尝试。用手机在微信里打开正式 URL 才能最终确认兼容性。
 
-已有 HTML title、description、Open Graph title/description/image，分享封面 public/share-cover.jpg。**微信对普通网页的卡片提取并不保证遵循 OG，基础 meta 不等于已实现自定义微信卡片。** 当前没有 JSSDK、签名服务或公众号配置，没有调用微信分享接口。
+V2 已配置 title、description、canonical、完整 Open Graph 和 Twitter Card；封面 public/share-cover-v2.jpg（1200×630，中央方形安全区），旧 share-cover.jpg 同步替换。**微信对普通网页的卡片提取并不保证遵循 OG，基础 meta 不等于已实现自定义微信卡片。** 当前没有 JSSDK、签名服务或公众号配置，没有调用微信分享接口。
 
 ## B. 自定义微信分享卡片的条件
 
@@ -16,7 +16,7 @@
 4. 独立的可信签名服务，服务端获取和缓存 access_token、jsapi_ticket，用当前页面完整 URL（去掉 # 后的 fragment）生成 nonceStr、timestamp、signature。静态 H5 本身不能安全持有密钥生成签名。
 5. 可公开访问的 HTTPS 分享图、最终分享标题/描述、正式链接，并确认分享图允许无鉴权抓取。
 
-如客户需要此能力，再接入微信官方 JS-SDK：加载官方 SDK → 请求签名服务 → wx.config → 在 wx.ready 中按当前支持情况配置 updateAppMessageShareData 和 updateTimelineShareData → wx.error 做降级。这属于正式阶段的额外集成，当前 Demo 不包含服务器，也没有假称 wx.ready 成功。无需使用 JSSDK 实现音频用户手势播放。
+如客户需要此能力，再接入微信官方 JS-SDK：加载官方 SDK → 请求签名服务 → wx.config → 在 wx.ready 中按当前支持情况配置 updateAppMessageShareData 和 updateTimelineShareData → wx.error 做降级。这属于正式阶段的额外集成，本轮 V2 不包含服务器，也没有假称 wx.ready 成功。无需使用 JSSDK 实现音频用户手势播放。
 
 ## 上线操作
 
@@ -32,3 +32,14 @@
 本地自动化验证使用真实 Chrome 浏览器内核的手机视口，不能替代真实 iPhone Safari 或微信内核，也不能证明微信自定义卡片已经可用。正式上线要在客户公众号条件确认后验证 JSSDK；缺少条件时普通网页继续可用。
 
 官方资料入口：[微信 JS-SDK 说明](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/JS-SDK.html)。以正式上线时微信官方说明和客户后台权限为准。
+
+
+## V2 元数据及本轮边界
+
+标题：旧唱片｜1周年庆电子邀请函。
+描述：10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。
+图片目标：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-v2.jpg 。这是构建后的目标URL，本轮未发布新图片，不能说已经公网可用。
+
+DEPLOY_SITE_URL 需为以 / 结尾的真实 HTTPS 页面地址；Gitee 正式构建使用实际URL覆盖，未提供时不能说Gitee分享配置已完成。
+
+本轮仅HTML/OG/Twitter，不接微信JS-SDK。分别验证微信菜单分享朋友、朋友圈、复制链接粘贴聊天；这些机制不同，朋友圈可能不显示描述，且存在缓存。元数据通过不等于微信卡片成功。

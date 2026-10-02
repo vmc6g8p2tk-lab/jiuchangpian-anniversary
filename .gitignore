@@ -37,3 +37,7 @@ temp/
 Thumbs.db
 .idea/
 .vscode/
+
+# 客户原始参考资料仅保留本地，不随源码/静态站点发布
+client-reference/
+demo-generated/

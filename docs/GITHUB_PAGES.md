@@ -2,9 +2,9 @@
 
 仓库：VMC6G8P2TK-Lab/jiuchangpian-anniversary，默认分支 master。
 
-计划发布地址：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/
+现有发布地址：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/
 
-此地址是部署目标，需工作流上传、执行成功后才表示页面已上线。
+V1 已通过现有工作流部署且用户确认正常。本轮 V2 未提交、推送或发布，线上没有因本轮更新。
 
 ## 首次配置
 
@@ -23,9 +23,9 @@ DEPLOY_BASE_PATH=/jiuchangpian-anniversary/
 DEPLOY_SITE_URL=https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/
 ```
 
-vite.config.ts 使用前者设置 base，使用后者生成 canonical、og:url 和绝对分享封面地址；没有更改邀请函文字、照片配置和业务功能。图片/音频/Logo 使用 BASE_URL；favicon 使用 HTML BASE_URL 占位；颗粒背景为 Vite 处理的相对源文件引用。当前使用系统字体，不下载字体文件；新增字体应使用 CSS 相对 url 并让 Vite 处理。
+vite.config.ts 使用前者设置 base，使用后者生成 canonical、og:url 和绝对分享封面地址；资源路径与内容配置分离。图片/音频/Logo 使用 BASE_URL；favicon 使用 HTML BASE_URL 占位；颗粒背景为 Vite 处理的相对源文件引用。当前使用系统字体，不下载字体文件；新增字体应使用 CSS 相对 url 并让 Vite 处理。
 
-未设置以上变量时仍为 base: './'，普通本地开发继续 http://localhost:5173/，Gitee 和已有 Sites 的普通构建继续兼容；Gitee 配置及文档保留。页面仅使用章节 hash，没有 SPA 多路径路由，无需 404.html 路由回退。
+未设置以上变量时仍为 base: './'，普通本地开发继续 http://localhost:5173/，Gitee 普通相对路径构建继续兼容；Gitee 配置及文档保留。页面仅使用章节 hash，没有 SPA 多路径路由，无需 404.html 路由回退。
 
 ## 本地复现 GitHub 构建（PowerShell）
 
@@ -33,6 +33,7 @@ vite.config.ts 使用前者设置 base，使用后者生成 canonical、og:url �
 npm ci
 $env:DEPLOY_BASE_PATH='/jiuchangpian-anniversary/'
 $env:DEPLOY_SITE_URL='https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/'
+$env:VERIFY_MOUNT_PATH='/jiuchangpian-anniversary/'
 npm run build
 npm run test:deployment
 npm run preview
@@ -47,17 +48,8 @@ Remove-Item Env:DEPLOY_BASE_PATH,Env:DEPLOY_SITE_URL -ErrorAction SilentlyContin
 npm run build
 ```
 
-## 由你执行提交与推送
+## V2 发布边界
 
-当前 GitHub remote 名为 github，Gitee remote 名为 origin，不要将 origin 的 Gitee 地址误认为 GitHub。
-
-```powershell
-Set-Location 'D:/codex项目/old-record-invitation'
-git add .github/workflows/deploy-pages.yml vite.config.ts index.html src/styles.css scripts/verify-subpath.mjs README.md docs/GITHUB_PAGES.md
-git commit -m "Configure GitHub Pages deployment on master"
-git push github master
-```
-
-首次运行后在 Actions 检查 build、deploy 两个任务，并打开真实 HTTPS 页面在微信/iPhone/Android 验收。仅本地构建通过不能证明仓库 Pages 设置、环境审批或线上部署已经成功。
+本轮只完成本地代码、构建及验证，不 commit、不 push、不修改 remote。GitHub remote 为 github，Gitee 为 origin，workflow 保留。客户素材和真机验收后另行安排发布。
 
 官方参考：[GitHub 自定义 Pages 工作流](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)、[Vite 静态部署说明](https://vite.dev/guide/static-deploy.html#github-pages)。
