@@ -58,6 +58,8 @@ docs/                       素材清单、部署和微信说明
 
 Gitee 仓库及 `/jiuchangpian-anniversary/` 子路径部署说明见 [Gitee 部署文档](docs/GITEE_PAGES.md)。构建后执行 `npm run test:deployment`，会用真实 Chrome 检查构建产物在该子路径下的资源加载与交互。
 
+GitHub 仓库 VMC6G8P2TK-Lab/jiuchangpian-anniversary 的 master 自动部署配置见 [GitHub Pages 文档](docs/GITHUB_PAGES.md)。GitHub 工作流通过 DEPLOY_BASE_PATH、DEPLOY_SITE_URL 指定项目子路径和分享地址；不设置变量时仍保留本地/Gitee 的相对路径构建。首次使用请在 GitHub 仓库 Settings → Pages 中将 Source 设为 GitHub Actions。
+
 上线步骤：确定域名和 HTTPS → 配置 share.siteUrl → 替换真实素材和活动信息 → lint/typecheck/test/build → 上传 dist → 检查根页面、图片、音频和分享封面 → 用微信/iOS/Android 实机验证并发送链接。中国大陆服务器和自有域名可能涉及备案，以托管商要求为准。
 
 如当前目录有 .openai/hosting.json，表示已注册 Sites 部署身份；使用 Sites 插件管理发布。它不影响标准 Vite 构建或迁移到其他静态托管，不要提交 token/secret。
