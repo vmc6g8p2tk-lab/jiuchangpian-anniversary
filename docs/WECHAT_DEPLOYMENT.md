@@ -1,45 +1,50 @@
-# 微信打开、分享与正式部署
+# 微信打开、分享与本轮本地验收
 
-## A. 普通网页链接
+正式网址：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/
 
-该项目输出静态 HTML/CSS/JS，无需公众号即可通过 HTTPS 链接在微信内打开。音乐从用户点击开启邀请或唱片按钮开始尝试播放，iOS/微信可能仍拒绝，浏览不受影响。点击右上角可再次尝试。用手机在微信里打开正式 URL 才能最终确认兼容性。
+## 本轮范围和状态
 
-V2 已配置 title、description、canonical、完整 Open Graph 和 Twitter Card；封面 public/share-cover-v2.jpg（1200×630，中央方形安全区），旧 share-cover.jpg 同步替换。**微信对普通网页的卡片提取并不保证遵循 OG，基础 meta 不等于已实现自定义微信卡片。** 当前没有 JSSDK、签名服务或公众号配置，没有调用微信分享接口。
+本轮仅优化静态分享元信息和正式封面，不接微信JS-SDK，不新增公众号配置或后端。当前已上线版本为之前的b97094c；本轮新标签和图片只在本地构建产物中，未commit、push或部署。不能把网页HTTP 200视为本轮已发布，更不能据此认定微信卡片成功。
 
-## B. 自定义微信分享卡片的条件
+本轮标题：旧唱片｜1周年庆电子邀请函
 
-客户应提供或协调：
+本轮描述：10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。
 
-1. 具备对应 JS 接口权限的公众号和管理员；具体账号类型、认证状态及接口资格以当前微信公众平台后台为准。
-2. 正式 HTTPS 域名及托管，配置公众号 JS 接口安全域名；如需校验文件，按微信后台要求放在域名根目录。大陆部署的备案等以托管及平台要求为准。
-3. AppID；AppSecret 只交给受信任服务端运维，绝不能写入 invitation.ts、静态 JS、Git 或构建产物。
-4. 独立的可信签名服务，服务端获取和缓存 access_token、jsapi_ticket，用当前页面完整 URL（去掉 # 后的 fragment）生成 nonceStr、timestamp、signature。静态 H5 本身不能安全持有密钥生成签名。
-5. 可公开访问的 HTTPS 分享图、最终分享标题/描述、正式链接，并确认分享图允许无鉴权抓取。
+新封面：public/share-cover-wechat.jpg（1200×630 JPEG）。目标URL为 https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-wechat.jpg ，发布前该URL尚不可用。旧分享图保持原样。
 
-如客户需要此能力，再接入微信官方 JS-SDK：加载官方 SDK → 请求签名服务 → wx.config → 在 wx.ready 中按当前支持情况配置 updateAppMessageShareData 和 updateTimelineShareData → wx.error 做降级。这属于正式阶段的额外集成，本轮 V2 不包含服务器，也没有假称 wx.ready 成功。无需使用 JSSDK 实现音频用户手势播放。
+分享配置集中在 src/config/invitation.ts。Vite在初始HTML head中生成title、description、canonical、Open Graph（含og:image:secure_url）及Twitter Card，图片使用HTTPS绝对URL。`npm run build`之后执行`npm run test:share`可直接验证原始HTML，不依赖React或页面JavaScript。
 
-## 上线操作
+**微信是否把网址展示成卡片由微信决定，HTML/OG/Twitter标签不能保证成功。** 当前没有调用微信分享接口，也没有伪造AppID、签名或“wx.ready成功”。
 
-1. 替换正式文案、Logo、照片、授权音乐、封面，完善 event 数据及导航链接。
-2. 填写 share.siteUrl 为实际 HTTPS 页面地址，重新构建。Vite 构建会把分享图转换为绝对 URL，同时写入 canonical/og:url。
-3. 执行 npm run lint、npm run typecheck、npm run test、npm run build，上传整个 dist。自定义域名 HTTPS 证书必须有效。
-4. 对图片和 JS 使用合理缓存，index.html 使用短缓存；替换音乐、图片时更换文件名避免老缓存。CDN 不应拦截微信资源请求。
-5. 测试 iPhone Safari、Android Chrome、微信 iOS/Android：首次加载、地址栏展开收起、Safe Area、上下滑动、音乐播放/暂停/切章、返回后台再打开、照片加载、电话/导航、弱网和分享给朋友/朋友圈。
-6. 分享预览可能有平台缓存；变更后重新打开真实页面和分享，必要时按微信当前支持方式更新缓存。
+## 发布后手机微信测试（最少操作）
 
-## 验证边界
+分别使用iPhone和Android。记录机型、微信版本、日期，并保留发送端和接收端截图。
 
-本地自动化验证使用真实 Chrome 浏览器内核的手机视口，不能替代真实 iPhone Safari 或微信内核，也不能证明微信自定义卡片已经可用。正式上线要在客户公众号条件确认后验证 JSSDK；缺少条件时普通网页继续可用。
+1. 在聊天中粘贴正式网址并发送，不仅观察输入框，也观察发送后的接收端消息。
+2. 在微信内打开正式网址，等待页面出现后，右上角“···”→“发送给朋友”，再次查看接收端消息。
+3. 逐项记录：是否仍为普通网址、是否出现标题、简介、缩略图、点击后是否打开正确页面。若平台不显示简介，按实际记录，不能补记为成功。
+4. 可补测朋友圈，但它与好友聊天展示形式不同，不能互相代替验收。
 
-官方资料入口：[微信 JS-SDK 说明](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/JS-SDK.html)。以正式上线时微信官方说明和客户后台权限为准。
+| 设备 | 测试路径 | 展示形式 | 标题 | 简介 | 缩略图 | 点击打开 | 截图 |
+|---|---|---|---|---|---|---|---|
+| iPhone | 粘贴网址发送 | 未实测 | 未实测 | 未实测 | 未实测 | 未实测 | 待提供 |
+| iPhone | 网页右上角发送 | 未实测 | 未实测 | 未实测 | 未实测 | 未实测 | 待提供 |
+| Android | 粘贴网址发送 | 未实测 | 未实测 | 未实测 | 未实测 | 未实测 | 待提供 |
+| Android | 网页右上角发送 | 未实测 | 未实测 | 未实测 | 未实测 | 未实测 | 待提供 |
 
+当前没有上述真实微信测试证据，微信卡片状态必须保持“未验证”。本地Chrome手机视口和禁用JavaScript测试不是真机微信测试。
 
-## V2 元数据及本轮边界
+## 若仍然显示普通网址
 
-标题：旧唱片｜1周年·感恩有你。
-描述：10月28日21:00 · 旧唱片一周年；感谢一路同行，让音乐与故事继续与你相伴。
-图片目标：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-v2.jpg 。这是 GitHub Pages 构建后的目标URL；本次按用户授权发布，公网可用性需在部署完成后检查。
+先检查发布后的初始HTML和封面是否确实更新、HTTPS图片是否无鉴权可抓取；微信提取方式和缓存可能影响结果，不能承诺固定刷新时间，也不能以重复加标签保证转换成卡片。保持正式网址不变。
 
-DEPLOY_SITE_URL 需为以 / 结尾的真实 HTTPS 页面地址；Gitee 正式构建使用实际URL覆盖，未提供时不能说Gitee分享配置已完成。
+如果需要进一步控制微信菜单分享内容，评估以下条件后再单独接入：
 
-本轮仅HTML/OG/Twitter，不接微信JS-SDK。分别验证微信菜单分享朋友、朋友圈、复制链接粘贴聊天；这些机制不同，朋友圈可能不显示描述，且存在缓存。元数据通过不等于微信卡片成功。
+- 具备相应JS分享接口权限的公众号及管理员，实际权限以微信公众平台后台为准。
+- 可配置并验证的JS接口安全域名、HTTPS正式站点；验证文件及备案等按平台/托管要求处理。
+- 可信服务端获取和缓存access_token、jsapi_ticket，按页面URL生成签名；AppSecret只由受信任服务端保管，绝不放前端或Git。
+- 正式接入后分别验证好友与朋友圈，保留失败降级，网页不因签名失败而无法浏览。
+
+参考：[微信官方JS-SDK说明](https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/JS-SDK.html)。本轮未启用该能力，也未购买任何第三方服务。
+
+本地验收、修改清单和公网只读检查详见 [WECHAT_SHARE_ACCEPTANCE.md](WECHAT_SHARE_ACCEPTANCE.md)。

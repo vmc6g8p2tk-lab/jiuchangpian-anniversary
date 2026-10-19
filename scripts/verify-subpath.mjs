@@ -61,7 +61,7 @@ try {
   }
   const entryScript = await page.locator('script[type="module"]').getAttribute('src')
   if (process.env.DEPLOY_BASE_PATH && process.env.DEPLOY_BASE_PATH !== './') assert.ok(entryScript.startsWith(process.env.DEPLOY_BASE_PATH))
-  assert.equal(await page.title(), '旧唱片｜1周年·感恩有你')
+  assert.equal(await page.title(), '旧唱片｜1周年庆电子邀请函')
   assert.equal(await page.locator('h1').textContent(), '旧唱片')
   for (const selector of ['.cover-date', '.ticket-date', '.ending-brand']) assert.ok((await page.locator(selector).textContent()).includes('10 月 28 日'))
   assert.equal(await page.locator('.ending-brand h3').textContent(), '旧唱片')
@@ -70,20 +70,21 @@ try {
   assert.equal(await page.locator('.event-actions a').getAttribute('href'), c.event.navigationUrl)
   assert.equal(await page.locator('.contact-line, a[href^="tel:"]').count(), 0)
   assert.ok(!(await page.locator('main').textContent()).includes('待定'))
-  const description = '10月28日21:00 · 旧唱片一周年；感谢一路同行，让音乐与故事继续与你相伴。'
+  const description = '10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。'
   for (const [selector, expected] of Object.entries({
     'meta[name="description"]': description,
-    'meta[property="og:title"]': '旧唱片｜1周年·感恩有你',
+    'meta[property="og:title"]': '旧唱片｜1周年庆电子邀请函',
     'meta[property="og:description"]': description,
     'meta[property="og:site_name"]': '旧唱片',
     'meta[property="og:type"]': 'website',
     'meta[property="og:locale"]': 'zh_CN',
+    'meta[property="og:image:secure_url"]': new URL(c.share.image, deploymentSiteUrl).href,
     'meta[property="og:image:type"]': 'image/jpeg',
     'meta[property="og:image:width"]': '1200',
     'meta[property="og:image:height"]': '630',
     'meta[property="og:image:alt"]': c.share.imageAlt,
     'meta[name="twitter:card"]': 'summary_large_image',
-    'meta[name="twitter:title"]': '旧唱片｜1周年·感恩有你',
+    'meta[name="twitter:title"]': '旧唱片｜1周年庆电子邀请函',
     'meta[name="twitter:description"]': description,
     'meta[name="twitter:image"]': new URL(c.share.image, deploymentSiteUrl).href,
   })) assert.equal(await page.locator(selector).getAttribute('content'), expected, selector)

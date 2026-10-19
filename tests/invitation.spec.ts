@@ -17,7 +17,7 @@ for (const [width, height] of [[375, 667], [390, 844], [430, 844], [390, 667]]) 
     await mkdir('artifacts/v2', { recursive: true })
     await mkdir('artifacts/v2-review', { recursive: true })
     await page.goto('/')
-    await expect(page).toHaveTitle('旧唱片｜1周年·感恩有你')
+    await expect(page).toHaveTitle('旧唱片｜1周年庆电子邀请函')
     await expect(page.locator('h1')).toHaveText('旧唱片')
     await expect(page.locator('.cover h2')).toHaveText('1周年 · 感恩有你')
     await expect(page.locator('.cover .tonearm')).toBeVisible()
@@ -136,31 +136,32 @@ for (const count of [1, 3, 5]) {
 
 test('客户 Logo 保留原比例和白色、正式元数据完整、暂定提示已移除', async ({ page, request }) => {
   await page.goto('/')
-  const description = '10月28日21:00 · 旧唱片一周年；感谢一路同行，让音乐与故事继续与你相伴。'
+  const description = '10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。'
   const site = 'https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/'
-  const image = `${site}share-cover-v2.jpg`
+  const image = `${site}share-cover-wechat.jpg`
   const metadata = {
     'meta[name="description"]': description,
-    'meta[property="og:title"]': '旧唱片｜1周年·感恩有你',
+    'meta[property="og:title"]': '旧唱片｜1周年庆电子邀请函',
     'meta[property="og:description"]': description,
     'meta[property="og:type"]': 'website',
     'meta[property="og:locale"]': 'zh_CN',
     'meta[property="og:site_name"]': '旧唱片',
     'meta[property="og:image"]': image,
+    'meta[property="og:image:secure_url"]': image,
     'meta[property="og:image:type"]': 'image/jpeg',
     'meta[property="og:image:width"]': '1200',
     'meta[property="og:image:height"]': '630',
-    'meta[property="og:image:alt"]': '旧唱片官方 Logo、黑胶与1周年纪念，10月28日',
+    'meta[property="og:image:alt"]': '旧唱片｜1周年庆电子邀请函，10月28日，复古黑胶唱片封套',
     'meta[property="og:url"]': site,
     'meta[name="twitter:card"]': 'summary_large_image',
-    'meta[name="twitter:title"]': '旧唱片｜1周年·感恩有你',
+    'meta[name="twitter:title"]': '旧唱片｜1周年庆电子邀请函',
     'meta[name="twitter:description"]': description,
     'meta[name="twitter:image"]': image,
   }
   for (const [selector, content] of Object.entries(metadata)) await expect(page.locator(selector)).toHaveAttribute('content', content)
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', site)
   expect(new URL(image).protocol).toBe('https:')
-  expect((await request.get('/share-cover-v2.jpg')).headers()['content-type']).toContain('image/jpeg')
+  expect((await request.get('/share-cover-wechat.jpg')).headers()['content-type']).toContain('image/jpeg')
   const logos = await page.locator('.brand-logo img').evaluateAll((images) => images.map((node) => {
     const img = node as HTMLImageElement, box = img.getBoundingClientRect()
     return { ratio: box.width / box.height, naturalRatio: img.naturalWidth / img.naturalHeight, filter: getComputedStyle(img).filter }
@@ -297,4 +298,20 @@ test('客户实景照片：七张全部加载、无占位标签、灯箱逐张�
     await page.getByRole('button', { name: c.ui.next, exact: true }).click()
   }
   await expect(page.getByRole('dialog')).toHaveAttribute('aria-label', c.gallery.photos[0].caption)
+})
+
+test('禁用网页 JavaScript 时，初始 HTML 仍提供分享元数据', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  try {
+    const page = await context.newPage()
+    await page.goto('/')
+    await expect(page).toHaveTitle('旧唱片｜1周年庆电子邀请函')
+    await expect(page.locator('.chapter')).toHaveCount(0)
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', '10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。')
+    for (const selector of ['meta[property="og:image"]', 'meta[property="og:image:secure_url"]', 'meta[name="twitter:image"]']) {
+      await expect(page.locator(selector)).toHaveCount(1)
+      await expect(page.locator(selector)).toHaveAttribute('content', 'https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-wechat.jpg')
+    }
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/')
+  } finally { await context.close() }
 })

@@ -44,9 +44,9 @@ BrandLogo 用于顶部、首页和结尾；按原唱片封套版面展示客户�
 
 ## 分享图和微信
 
-新图 public/share-cover-v2.jpg，1200×630；旧 share-cover.jpg 同步换为新图。Logo、旧唱片、1周年、10月28日在中央方形安全区。`node scripts/generate-share-cover.mjs` 根据集中配置和原版 Logo 生成封面；更换文件名可区分缓存版本。Demo 生成器只写 demo-generated/，绝不覆盖已有文件或 public 正式素材。
+本轮静态分享封面为 public/share-cover-wechat.jpg（1200×630 JPEG），深色黑胶与暖金唱片封套风格，中央630×630区域保留 Logo、旧唱片、1周年庆电子邀请函及10月28日。运行 `npm run assets:share` 可重新生成封面与 artifacts/wechat-share-review/ 中的裁切预览，不覆盖旧 share-cover-v2.jpg/share-cover.jpg。Demo 生成器只写 demo-generated/，绝不覆盖已有文件或 public 正式素材。
 
-Vite 根据 share 生成 title、description、canonical、完整 OG、Twitter Card。默认 siteUrl 使用已有 GitHub 页面；Gitee 发布时用真实 DEPLOY_SITE_URL 覆盖，仓库 URL 不是网页 URL。分享图必须为公网 HTTPS 绝对地址。
+Vite 在初始 HTML 中根据 share 生成 title、description、canonical、完整 OG（含 og:image:secure_url）和 Twitter Card；执行 `npm run build` 后运行 `npm run test:share` 验证原始构建 HTML 无重复、无占位符，图片路径和尺寸正确。默认 siteUrl 使用已有 GitHub 页面；Gitee 发布时用真实 DEPLOY_SITE_URL 覆盖，仓库 URL 不是网页 URL。分享图必须为公网 HTTPS 绝对地址。
 
 本轮仅 HTML/OG/Twitter，没有微信 JS-SDK，不能保证微信一定显示卡片。朋友、朋友圈、粘贴链接分别真机验证。详见 docs/WECHAT_DEPLOYMENT.md。
 
@@ -81,3 +81,5 @@ npm run test:deployment
 ## 正式交付前
 
 已收到并接入7张客户实景照片；仍缺授权音乐、最终文案和分享封面确认；特别之夜四项已按客户反馈调整，活动暂定提示已移除。时间、地点和地址已确认；联系人与电话按客户要求移除。客户素材清单见 docs/ASSETS_REQUIRED.md。历史 V1 验收保留 docs/ACCEPTANCE.md，V2 记录 docs/V2_ACCEPTANCE.md。代码完成、本地验证、线上验证分开记录。2026年10月19日用户已授权上线，按现有 GitHub Pages 工作流提交、推送并部署；不修改 remote，发布结果以 Actions 及线上页面核验为准。
+
+本轮分享优化仅完成本地修改与验收，尚未提交或发布；线上继续使用之前版本。完整报告见 docs/WECHAT_SHARE_ACCEPTANCE.md，微信真机测试步骤见 docs/WECHAT_DEPLOYMENT.md。

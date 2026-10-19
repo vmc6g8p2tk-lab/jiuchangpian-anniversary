@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "test": "playwright test",
-    "test:deployment": "node scripts/verify-subpath.mjs"
+    "test:deployment": "node scripts/verify-subpath.mjs",
+    "assets:share": "node scripts/generate-share-cover.mjs",
+    "test:share": "node scripts/verify-share-metadata.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.0",
