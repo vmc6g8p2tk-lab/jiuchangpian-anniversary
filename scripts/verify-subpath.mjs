@@ -61,15 +61,19 @@ try {
   }
   const entryScript = await page.locator('script[type="module"]').getAttribute('src')
   if (process.env.DEPLOY_BASE_PATH && process.env.DEPLOY_BASE_PATH !== './') assert.ok(entryScript.startsWith(process.env.DEPLOY_BASE_PATH))
-  assert.equal(await page.title(), '旧唱片｜1周年庆电子邀请函')
+  assert.equal(await page.title(), '旧唱片｜1周年·感恩有你')
   assert.equal(await page.locator('h1').textContent(), '旧唱片')
   for (const selector of ['.cover-date', '.ticket-date', '.ending-brand']) assert.ok((await page.locator(selector).textContent()).includes('10 月 28 日'))
-  assert.ok(!(await page.locator('main').textContent()).includes('旧唱片江景民谣'))
+  assert.equal(await page.locator('.ending-brand h3').textContent(), '旧唱片')
+  assert.deepEqual(await page.locator('.event-ticket dd').allTextContents(), [c.event.time, c.event.venue, c.event.address])
+  assert.equal(await page.locator('.event-actions a').count(), 1)
+  assert.equal(await page.locator('.event-actions a').getAttribute('href'), c.event.navigationUrl)
+  assert.equal(await page.locator('.contact-line, a[href^="tel:"]').count(), 0)
   assert.ok(!(await page.locator('main').textContent()).includes('待定'))
-  const description = '10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约'
+  const description = '10月28日21:00 · 旧唱片一周年；感谢一路同行，让音乐与故事继续与你相伴。'
   for (const [selector, expected] of Object.entries({
     'meta[name="description"]': description,
-    'meta[property="og:title"]': '旧唱片｜1周年庆电子邀请函',
+    'meta[property="og:title"]': '旧唱片｜1周年·感恩有你',
     'meta[property="og:description"]': description,
     'meta[property="og:site_name"]': '旧唱片',
     'meta[property="og:type"]': 'website',
@@ -79,17 +83,17 @@ try {
     'meta[property="og:image:height"]': '630',
     'meta[property="og:image:alt"]': c.share.imageAlt,
     'meta[name="twitter:card"]': 'summary_large_image',
-    'meta[name="twitter:title"]': '旧唱片｜1周年庆电子邀请函',
+    'meta[name="twitter:title"]': '旧唱片｜1周年·感恩有你',
     'meta[name="twitter:description"]': description,
     'meta[name="twitter:image"]': new URL(c.share.image, deploymentSiteUrl).href,
   })) assert.equal(await page.locator(selector).getAttribute('content'), expected, selector)
   assert.equal(new URL(await page.locator('meta[property="og:image"]').getAttribute('content')).protocol, 'https:')
   const share = await sharp(path.join(root, c.share.image)).metadata()
   assert.equal(share.width, 1200); assert.equal(share.height, 630)
-  assert.equal(await page.locator('.chapter').count(), 6)
-  await page.getByRole('button', { name: '开启邀请', exact: true }).click()
+  assert.equal(await page.locator('.chapter').count(), c.navigation.length)
+  await page.getByRole('button', { name: c.ui.open, exact: true }).click()
   // 静态资源验证不要求浏览器允许播放；拒绝播放由功能测试单独验证。
-  for (let index = 0; index < 6; index++) {
+  for (let index = 0; index < c.navigation.length; index++) {
     await page.locator('.chapter-nav button').nth(index).click()
     await page.waitForFunction((i) => document.querySelector('.chapter-nav .active') === document.querySelectorAll('.chapter-nav button')[i], index)
   }
@@ -113,5 +117,5 @@ try {
   assert.ok([...resources].some((url) => url.endsWith('.js')))
   assert.ok([...resources].some((url) => url.endsWith('.css')))
   assert.deepEqual(problems, [])
-  console.log(`PASS: base=${process.env.DEPLOY_BASE_PATH || './'}，挂载=${prefix}；JS/CSS/照片/Logo/颗粒/分享图/音频加载；品牌日期及全部 meta 正确；6章节正常；无项目 Console 错误。`)
+  console.log(`PASS: base=${process.env.DEPLOY_BASE_PATH || './'}，挂载=${prefix}；JS/CSS/照片/Logo/颗粒/分享图/音频加载；品牌日期及全部 meta 正确；${c.navigation.length}章节正常；无项目 Console 错误。`)
 } finally { await browser?.close(); await new Promise((resolve) => server.close(resolve)) }

@@ -1,6 +1,8 @@
-# 旧唱片｜1周年庆电子邀请函 V2
+# 旧唱片｜1周年·感恩有你 V2
 
-Vite + React + TypeScript + CSS + Framer Motion。六章：周年黑胶封套、纪念内页、照片档案、暗红演出海报、入场券、黑胶收尾。周年日期10月28日；按2026年10月21日前交付规划，10月20日内部发布检查。
+当前视觉保留原唱片纪念册版面：大型黑胶、唱针、照片档案与票券；首屏突出“1周年·感恩有你”，不以邀请函开场。全册采用泛黄报纸底色、静态纤维与边缘裂纹，样式集中在 src/styles.css。客户 Logo 和实景照片不加滤镜，活动信息保持集中配置。
+
+Vite + React + TypeScript + CSS + Framer Motion。七章：感恩黑胶封套、纪念内页、照片档案、特别之夜、周年活动详情、入场券、黑胶收尾。周年日期10月28日；按2026年10月21日前交付规划，10月20日内部发布检查。
 
 ## 安装与运行
 
@@ -26,13 +28,13 @@ Playwright 使用本机 Chrome，默认在5174启动或复用本项目服务，�
 
 ## 文字、时间和地点
 
-所有业务内容在 src/config/invitation.ts：brand、cover、story、gallery、celebration、event、ending、music、share、ui。店名“旧唱片”；event.date 统一提供首页、票根和结尾日期。时间、地址、联系人、电话、地图未提供，统一“待确认”。phone/navigationUrl 为空时禁用按钮，不生成假链接。celebration.pending=true 会明确提示活动暂定；客户确认后再更新状态。活动日期和交付日期分别管理，不猜测星期。
+所有业务内容在 src/config/invitation.ts：brand、cover、story、gallery、celebration、activities、event、ending、music、share、ui。店名“旧唱片”；event.date 统一提供首页、票根和结尾日期。开始时间21:00，地点旧唱片江景民谣四楼，地址长沙市岳麓区渔人码头2栋。仅保留地图导航，不显示联系人和电话。导航按配置地址打开高德地图搜索（未猜测坐标）；navigationUrl 为空时禁用导航按钮。当前 celebration.pending=false，按客户要求移除活动暂定提示；需要恢复时可在配置中开启。活动日期和交付日期分别管理，不猜测星期。
 
 ## Logo、照片、音乐
 
 客户原图和视频保留本地 client-reference/，已 Git 忽略且不进入 dist。public/assets/images/brand-logo.png 是1133×230白色透明 PNG，原图完整保留，无裁切、改字、改色、反色或重绘。原图内部含“旧唱片江景民谣”，属于客户原版组合标志，不能按旧品牌搜索擅自改字；网页店名仍为“旧唱片”。浅色页用深色底牌，白字不消失。
 
-BrandLogo 用于顶部、首页、结尾。替换 brand.logo 的 src、alt、width、height；根据新原图检查背景，不添加 invert、圆形裁切或正方形强制尺寸。
+BrandLogo 用于顶部、首页和结尾；按原唱片封套版面展示客户原 Logo。替换 brand.logo 的 src、alt、width、height；根据新原图检查背景，不添加 invert、圆形裁切或正方形强制尺寸。
 
 照片放 public/assets/images/，修改 gallery.photos 的 src、alt、caption；正式照片到位后清空 placeholder。故事照片使用 story.photo。相册按数组长度处理，已验证1/3/5张；更多照片自然延长章节。现有酒吧、江景和演出图是有明确标识的原创占位插画，不是实拍。
 
@@ -78,4 +80,4 @@ npm run test:deployment
 
 ## 正式交付前
 
-仍缺正式照片、音乐、开始时间、地址、联系人、电话、地图和活动确认。客户素材清单见 docs/ASSETS_REQUIRED.md。历史 V1 验收保留 docs/ACCEPTANCE.md，V2 记录 docs/V2_ACCEPTANCE.md。代码完成、本地验证、线上验证分开记录。本轮不 commit、不 push、不修改 remote、不发布新线上版本。
+已收到并接入7张客户实景照片；仍缺授权音乐、最终文案和分享封面确认；特别之夜四项已按客户反馈调整，活动暂定提示已移除。时间、地点和地址已确认；联系人与电话按客户要求移除。客户素材清单见 docs/ASSETS_REQUIRED.md。历史 V1 验收保留 docs/ACCEPTANCE.md，V2 记录 docs/V2_ACCEPTANCE.md。代码完成、本地验证、线上验证分开记录。2026年10月19日用户已授权上线，按现有 GitHub Pages 工作流提交、推送并部署；不修改 remote，发布结果以 Actions 及线上页面核验为准。

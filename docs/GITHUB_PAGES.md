@@ -4,7 +4,7 @@
 
 现有发布地址：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/
 
-V1 已通过现有工作流部署且用户确认正常。本轮 V2 未提交、推送或发布，线上没有因本轮更新。
+V1 已通过现有工作流部署且用户确认正常。2026年10月19日用户已授权发布当前七章 V2：原唱片版面、深旧黄纸底与裂纹、首屏感恩主题、7张客户照片及正式活动信息。发布状态以最新成功的 Actions 和线上页面核验为准。
 
 ## 首次配置
 
@@ -39,7 +39,7 @@ npm run test:deployment
 npm run preview
 ```
 
-该预览访问终端端口下的 /jiuchangpian-anniversary/。test:deployment 需要已安装 Chrome，使用真实 dist 检查子路径、元数据、JS/CSS、照片、Logo、颗粒、封面、音频和六章节，不依赖 Vite 开发服务回退。
+该预览访问终端端口下的 /jiuchangpian-anniversary/。test:deployment 需要已安装 Chrome，使用真实 dist 检查子路径、元数据、JS/CSS、照片、Logo、颗粒、封面、音频和七章节，不依赖 Vite 开发服务回退。
 
 恢复普通本地/Gitee 构建时，在同一 PowerShell 执行：
 
@@ -48,8 +48,8 @@ Remove-Item Env:DEPLOY_BASE_PATH,Env:DEPLOY_SITE_URL -ErrorAction SilentlyContin
 npm run build
 ```
 
-## V2 发布边界
+## V2 发布操作
 
-本轮只完成本地代码、构建及验证，不 commit、不 push、不修改 remote。GitHub remote 为 github，Gitee 为 origin，workflow 保留。客户素材和真机验收后另行安排发布。
+本次按用户授权，将已通过本地验证的 V2 提交至 master，推送 github 触发现有工作流；确认构建、部署与线上资源均成功后再报告上线完成。GitHub remote 为 github，Gitee 为 origin，均保持原样。Gitee 相对路径部署兼容性保留；本次不变更 Gitee Pages 配置。
 
 官方参考：[GitHub 自定义 Pages 工作流](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)、[Vite 静态部署说明](https://vite.dev/guide/static-deploy.html#github-pages)。

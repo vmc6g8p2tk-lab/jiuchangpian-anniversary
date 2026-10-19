@@ -8,6 +8,7 @@ import { useInvitationMusic } from './hooks/useInvitationMusic'
 import { Photo } from './components/Photo'
 import { BrandLogo } from './components/BrandLogo'
 import { GalleryArchive } from './components/GalleryArchive'
+import { AnniversaryDetails } from './components/AnniversaryDetails'
 import { PhotoLightbox } from './components/PhotoLightbox'
 
 function SmallIcon({ type }: { type: string }) {
@@ -49,7 +50,7 @@ export default function App() {
         <div className="paper-top"><span>{c.cover.kicker}</span><span>{c.edition}</span></div>
         <Reveal className="cover-heading"><BrandLogo variant="cover" /><div className="cover-title"><h1>{c.brand.name}</h1><span>{c.cover.title}</span></div><p className="cover-date">{c.event.date}<span>{c.cover.english}</span></p></Reveal>
         <div className="turntable-scene"><div className="record-shadow" /><Record className="hero-record" /><div className="tonearm" aria-hidden="true"><i /><span /></div><motion.div className="anniversary-number" initial={reduce ? false : { opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.5, delay: 0.4 }}>{c.cover.number}<span>{c.cover.numberSuffix}</span></motion.div><span className="record-side">{c.cover.side}</span></div>
-        <Reveal className="cover-quote" delay={0.4}><p>{c.cover.subtitle}</p><span className="small-star" aria-hidden="true">✳</span></Reveal>
+        <Reveal className="cover-quote" delay={0.4}><h2>{c.cover.gratitude}</h2><span className="small-star" aria-hidden="true">✳</span></Reveal>
         <Reveal className="cover-ticket" delay={0.7}><div><span>{c.cover.ticketEnglish}</span><strong>{c.cover.ticket}</strong><small>{c.cover.footer}</small></div><button className="open-button" onClick={openInvitation}>{c.ui.open}<span aria-hidden="true">↓</span></button></Reveal>
         <button className="swipe-hint" onClick={() => goTo(1)}><span>{c.ui.swipe}</span><i aria-hidden="true" /></button>
       </section>
@@ -57,7 +58,7 @@ export default function App() {
       <section id="chapter-1" data-chapter="1" className="chapter story">
         <Reveal><p className="eyebrow">{c.story.kicker}</p><h2>{c.story.title}</h2></Reveal>
         <div className="story-copy">{c.story.lines.map((line, index) => <Reveal delay={index * 0.06} key={index}>{line ? <p>{line}</p> : <div className="verse-space" />}</Reveal>)}</div>
-        <Reveal className="story-memory"><div className="date-stamp">{c.story.stamp}<span>{c.cover.english}</span></div><Photo photo={{ src: c.story.photo, alt: c.story.photoAlt, caption: c.story.photoCaption, placeholder: c.story.placeholder }} /><p className="handwritten">{c.story.note}</p></Reveal>
+        <Reveal className="story-memory"><div className="date-stamp">{c.story.stamp}<span>{c.cover.english}</span></div><Photo photo={{ src: c.story.photo, webp: c.story.photoWebp, avif: c.story.photoAvif, alt: c.story.photoAlt, caption: c.story.photoCaption, placeholder: c.story.placeholder }} /><p className="handwritten">{c.story.note}</p></Reveal>
         <div className="chapter-foot"><span>{c.brand.english}</span><span>01 — 02</span></div>
       </section>
 
@@ -75,14 +76,16 @@ export default function App() {
         <Reveal className="celebration-sign"><span className="anniversary-seal">{c.celebration.seal}<b>1</b></span><p>{c.celebration.footer}</p></Reveal>
       </section>
 
-      <section id="chapter-4" data-chapter="4" className="chapter formal">
+      <AnniversaryDetails />
+
+      <section id="chapter-5" data-chapter="5" className="chapter formal">
         <Reveal><p className="eyebrow">{c.event.kicker}</p><h2>{c.event.title}</h2><p className="formal-subtitle">{c.event.subtitle}</p></Reveal>
         <Reveal className="event-ticket"><div className="ticket-header"><span>{c.event.ticketTitle}</span><small>{c.event.ticketNumber}</small></div><p className="ticket-date">{c.event.date}<span>{c.cover.title}</span></p><dl>{(['time', 'venue', 'address'] as const).map((field) => <div key={field}><dt>{c.event.fields[field]}</dt><dd>{c.event[field]}</dd></div>)}</dl><div className="ticket-tear"><span>{c.brand.name}</span><div className="barcode" aria-hidden="true" /></div></Reveal>
         <div className="invitation-copy">{c.event.copy.map((line, index) => <Reveal delay={index * 0.06} key={line}><p>{line}</p></Reveal>)}<Reveal delay={0.3}><p className="closing-copy">{c.event.closing}</p></Reveal></div>
-        <Reveal className="location-card"><div className="location-heading"><span aria-hidden="true">⌖</span><div><strong>{c.event.addressLabel}</strong><p>{c.event.address}</p></div></div><div className="event-actions">{c.event.navigationUrl ? <a href={c.event.navigationUrl} target="_blank" rel="noopener noreferrer">{c.ui.map}<span aria-hidden="true">↗</span></a> : <button disabled title={c.ui.navigationPending}>{c.ui.map}<span aria-hidden="true">↗</span></button>}{c.event.phone ? <a href={`tel:${c.event.phone}`}>{c.ui.contact}</a> : <button disabled title={c.ui.contactPending}>{c.ui.contact}</button>}</div><p className="contact-line">{c.event.contactLabel}：{c.event.contact || c.pendingValue} · {c.event.phone || c.pendingValue}</p></Reveal>
+        <Reveal className="location-card"><div className="location-heading"><span aria-hidden="true">⌖</span><div><strong>{c.event.addressLabel}</strong><p>{c.event.address}</p></div></div><div className="event-actions">{c.event.navigationUrl ? <a href={c.event.navigationUrl} target="_blank" rel="noopener noreferrer">{c.ui.map}<span aria-hidden="true">↗</span></a> : <button disabled title={c.ui.navigationPending}>{c.ui.map}<span aria-hidden="true">↗</span></button>}</div></Reveal>
       </section>
 
-      <section id="chapter-5" data-chapter="5" className="chapter ending">
+      <section id="chapter-6" data-chapter="6" className="chapter ending">
         <Reveal><p className="eyebrow">{c.ending.kicker}</p></Reveal>
         <Reveal className="ending-record"><Record /><span className="ending-seal">{c.ending.anniversary}</span></Reveal>
         <Reveal className="ending-copy"><h2>{c.ending.title}</h2>{c.ending.lines.map((line) => <p key={line}>{line}</p>)}<span className="ending-english">{c.ending.english}</span></Reveal>
@@ -91,7 +94,7 @@ export default function App() {
       </section>
     </main>
     <nav className="chapter-nav" aria-label={c.navigationLabel} inert={lightbox !== null}>{c.navigation.map((name, index) => <button key={name} className={active === index ? 'active' : ''} onClick={() => goTo(index)} aria-label={`${index + 1}. ${name}`} aria-current={active === index ? 'step' : undefined}><span /></button>)}</nav>
-    <div className="page-counter" aria-hidden="true"><span>{String(active + 1).padStart(2, '0')}</span><i />06</div>
+    <div className="page-counter" aria-hidden="true"><span>{String(active + 1).padStart(2, '0')}</span><i />{String(c.navigation.length).padStart(2, '0')}</div>
     <div className="grain" aria-hidden="true" />
     <AnimatePresence>{lightbox !== null && <PhotoLightbox photos={c.gallery.photos} index={lightbox} onChange={setLightbox} onClose={() => setLightbox(null)} />}</AnimatePresence>
     <span className="sr-only" aria-live="polite">{opened ? c.navigation[active] : ''}</span>

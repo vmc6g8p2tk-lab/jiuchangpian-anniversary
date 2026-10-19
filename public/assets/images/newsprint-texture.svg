@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384">
+  <!-- 原创静态纸纤维和印刷颗粒，无文字、外部素材或动画。 -->
+  <filter id="paper" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".64" numOctaves="3" seed="28" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer>
+  </filter>
+  <rect width="384" height="384" filter="url(#paper)"/>
+  <g stroke="#705637" stroke-width=".55" opacity=".17" fill="none" stroke-linecap="round">
+    <path d="m14 31 4-1m37 27 5 1m32-42 2 4m63 11 7-1m45 38 4 2m57-44 3 1m48 38 5-1m34 25 2 4M23 112l5 1m45 16 3-2m48-30 6 2m31 34 3 1m52-19 5-1m38 22 3 3m48-32 7 1m35 27 4-1M8 187l5-1m48-13 3 2m44 27 6-2m42-35 4 1m45 24 3 2m41-19 6-1m44 37 4-1m40-28 5 2M28 256l5 1m29-30 4 2m49 30 5-1m42-22 6 1m42 33 4-2m37-34 4 1m38 30 7-1m42-18 4 2M14 329l6-1m34 32 4 1m52-42 4 2m39 26 5-1m43-24 4 2m39 36 6-2m43-35 4 1m38 32 5-1"/>
+  </g>
+  <g fill="#675139" opacity=".14">
+    <circle cx="36" cy="84" r=".65"/><circle cx="144" cy="65" r=".6"/><circle cx="252" cy="73" r=".75"/><circle cx="336" cy="19" r=".5"/>
+    <circle cx="49" cy="156" r=".8"/><circle cx="180" cy="156" r=".55"/><circle cx="275" cy="181" r=".6"/><circle cx="366" cy="154" r=".6"/>
+    <circle cx="22" cy="223" r=".5"/><circle cx="126" cy="280" r=".75"/><circle cx="228" cy="224" r=".65"/><circle cx="323" cy="294" r=".55"/>
+    <circle cx="72" cy="301" r=".6"/><circle cx="181" cy="368" r=".65"/><circle cx="279" cy="341" r=".8"/><circle cx="360" cy="369" r=".6"/>
+  </g>
+</svg>

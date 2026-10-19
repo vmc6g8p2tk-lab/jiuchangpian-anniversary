@@ -36,9 +36,9 @@ V2 已配置 title、description、canonical、完整 Open Graph 和 Twitter Car
 
 ## V2 元数据及本轮边界
 
-标题：旧唱片｜1周年庆电子邀请函。
-描述：10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。
-图片目标：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-v2.jpg 。这是构建后的目标URL，本轮未发布新图片，不能说已经公网可用。
+标题：旧唱片｜1周年·感恩有你。
+描述：10月28日21:00 · 旧唱片一周年；感谢一路同行，让音乐与故事继续与你相伴。
+图片目标：https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/share-cover-v2.jpg 。这是 GitHub Pages 构建后的目标URL；本次按用户授权发布，公网可用性需在部署完成后检查。
 
 DEPLOY_SITE_URL 需为以 / 结尾的真实 HTTPS 页面地址；Gitee 正式构建使用实际URL覆盖，未提供时不能说Gitee分享配置已完成。
 
