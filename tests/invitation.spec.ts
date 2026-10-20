@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, chromium } from '@playwright/test'
 import { mkdir, readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { invitation as c } from '../src/config/invitation'
@@ -67,9 +67,17 @@ for (const [width, height] of [[375, 667], [390, 844], [430, 844], [390, 667]]) 
 }
 
 test('用户开启音乐，切章不重播，暂停与继续保持播放位置', async ({ page }) => {
+  // 确定性覆盖“自动播放被拒绝，但用户操作允许播放”的分支。
+  await page.addInitScript(() => {
+    const nativePlay = HTMLMediaElement.prototype.play
+    HTMLMediaElement.prototype.play = function () {
+      if (!navigator.userActivation.isActive) return Promise.reject(new DOMException('Gesture required', 'NotAllowedError'))
+      return nativePlay.call(this)
+    }
+  })
   await page.goto('/')
   await expect(page.locator('audio')).toHaveCount(1)
-  await expect(page.locator('audio')).toHaveAttribute('preload', 'none')
+  await expect(page.locator('audio')).toHaveAttribute('preload', 'metadata')
   await expect(page.locator('audio')).toHaveAttribute('src', `/${c.music.src}`)
   await expect(page.locator('audio')).toHaveJSProperty('paused', true)
   await page.getByRole('button', { name: c.ui.open, exact: true }).click()
@@ -88,6 +96,62 @@ test('用户开启音乐，切章不重播，暂停与继续保持播放位置',
   await page.getByRole('button', { name: c.ui.play, exact: true }).click()
   await expect(page.locator('audio')).toHaveJSProperty('paused', false)
   expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThanOrEqual(paused)
+})
+
+test('浏览器允许时进入即实际播放；手动暂停后微信就绪和翻页不抢播', async ({ baseURL }) => {
+  // 独立测试浏览器明确允许自动播放；不把此条件当作微信真机证据。
+  const browser = await chromium.launch({ channel: 'chrome', args: ['--autoplay-policy=no-user-gesture-required'] })
+  try {
+    const page = await browser.newPage()
+    await page.route('http://gc.kis.v2.scr.kaspersky-labs.com/**', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }))
+    await page.goto(baseURL!)
+    await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(0)
+    await expect(page.locator('audio')).toHaveCount(1)
+    await page.getByRole('button', { name: c.ui.pause, exact: true }).click()
+    await page.evaluate(() => document.dispatchEvent(new Event('WeixinJSBridgeReady')))
+    await page.getByRole('button', { name: c.ui.open, exact: true }).click()
+    await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+    await expect(page.locator('.mini-record')).not.toHaveClass(/is-spinning/)
+    await page.getByRole('button', { name: c.ui.play, exact: true }).click()
+    await expect(page.locator('audio')).toHaveJSProperty('paused', false)
+  } finally { await browser.close() }
+})
+
+test('浏览器真实拦截自动播放时提示可读，首次触碰页面即可开启', async ({ baseURL }) => {
+  const browser = await chromium.launch({ channel: 'chrome', args: ['--autoplay-policy=document-user-activation-required', '--disable-features=PreloadMediaEngagementData,MediaEngagementBypassAutoplayPolicies'] })
+  try {
+    const page = await browser.newPage()
+    const errors: string[] = []
+    page.on('pageerror', e => errors.push(e.message))
+    await page.route('http://gc.kis.v2.scr.kaspersky-labs.com/**', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }))
+    await page.goto(baseURL!)
+    await expect(page.getByRole('status')).toContainText(c.ui.autoplayBlocked)
+    await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+    await expect(page.getByRole('button', { name: c.ui.play, exact: true })).toHaveAttribute('aria-pressed', 'false')
+    await page.locator('.cover h1').click()
+    await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByRole('status')).toBeEmpty()
+    expect(errors).toEqual([])
+  } finally { await browser.close() }
+})
+
+test('微信宿主就绪会追加一次播放尝试，失败不阻断浏览', async ({ page }) => {
+  await page.addInitScript(() => {
+    let attempts = 0
+    HTMLMediaElement.prototype.play = () => {
+      document.documentElement.dataset.musicAttempts = String(++attempts)
+      return Promise.reject(new DOMException('Blocked in test', 'NotAllowedError'))
+    }
+  })
+  await page.goto('/')
+  await expect(page.getByRole('status')).toContainText(c.ui.autoplayBlocked)
+  const before = Number(await page.locator('html').getAttribute('data-music-attempts'))
+  await page.evaluate(() => document.dispatchEvent(new Event('WeixinJSBridgeReady')))
+  await expect(page.locator('html')).toHaveAttribute('data-music-attempts', String(before + 1))
+  await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+  await page.locator('.chapter-nav button').nth(2).click()
+  await expect(page.locator('.chapter-nav .active')).toHaveAttribute('aria-label', `3. ${c.navigation[2]}`)
 })
 
 test('音乐授权署名在结尾可见，作者和许可链接完整', async ({ page }) => {

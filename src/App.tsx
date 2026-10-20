@@ -30,7 +30,7 @@ export default function App() {
   const reduce = useReducedMotion()
   const music = useInvitationMusic()
   const goTo = (index: number) => document.getElementById(`chapter-${index}`)?.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' })
-  const openInvitation = () => { setOpened(true); void music.play(); goTo(1) }
+  const openInvitation = () => { setOpened(true); void music.play('open'); goTo(1) }
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {

@@ -12,6 +12,10 @@
 
 旧 `background.wav` 是16秒原创合成 Demo，保留备份但不再被当前配置引用。
 
-音乐配置统一在 `src/config/invitation.ts` 的 music 中，含 src、volume、enabled、credit。替换曲目必须同时核实授权并更新署名、许可和文件记录；建议更换文件名避免旧缓存。
+音乐配置统一在 `src/config/invitation.ts` 的 music 中，含 src、volume、enabled、autoplay、credit。替换曲目必须同时核实授权并更新署名、许可和文件记录；建议更换文件名避免旧缓存。
 
-音频 `preload="none"`，用户点击首页“翻开这一年”或唱片按钮后才加载。单一 audio 实例、loop 跨章节持续播放、暂停续播保留位置；播放失败不阻断浏览。
+当前 autoplay=true，使用 preload="metadata"，页面加载后立即调用播放；因此音乐可能在首次进入时开始加载。微信 WeixinJSBridgeReady 事件再补充一次尝试，不引入JS-SDK或需要签名的微信接口。
+
+被浏览器拦截时显示“轻触页面或点击右上角唱片，开启背景音乐”，首次真实触碰页面时再尝试；也可直接点击首页“翻开这一年”或唱片按钮。手动暂停后，自动重试、翻页和首页开启按钮均尊重暂停；点击唱片才主动恢复。单一 audio、loop、跨章续播、失败不阻断浏览继续保留。
+
+关闭 music.autoplay 会恢复 preload="none" 和仅显式点击播放。有声自动播放权限仍由微信/浏览器决定，不能保证所有设备零操作出声。
