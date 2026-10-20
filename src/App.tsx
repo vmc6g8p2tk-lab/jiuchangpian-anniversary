@@ -91,6 +91,7 @@ export default function App() {
         <Reveal className="ending-copy"><h2>{c.ending.title}</h2>{c.ending.lines.map((line) => <p key={line}>{line}</p>)}<span className="ending-english">{c.ending.english}</span></Reveal>
         <Reveal className="ending-brand"><BrandLogo variant="ending" /><h3>{c.brand.name}</h3><p>{c.ending.dateLabel} · {c.event.date}</p><span>{c.ending.signoff}</span></Reveal>
         <button className="replay-button" onClick={() => goTo(0)}>{c.ui.back}<span aria-hidden="true">↑</span></button>
+        <p className="music-credit">{c.music.credit.label}：<a href={c.music.credit.sourceUrl} target="_blank" rel="noopener noreferrer">{c.music.credit.title} · {c.music.credit.artist}</a><br /><a href={c.music.credit.licenseUrl} target="_blank" rel="noopener noreferrer">{c.music.credit.license}</a></p>
       </section>
     </main>
     <nav className="chapter-nav" aria-label={c.navigationLabel} inert={lightbox !== null}>{c.navigation.map((name, index) => <button key={name} className={active === index ? 'active' : ''} onClick={() => goTo(index)} aria-label={`${index + 1}. ${name}`} aria-current={active === index ? 'step' : undefined}><span /></button>)}</nav>

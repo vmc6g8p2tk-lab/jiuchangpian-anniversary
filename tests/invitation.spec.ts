@@ -68,9 +68,15 @@ for (const [width, height] of [[375, 667], [390, 844], [430, 844], [390, 667]]) 
 
 test('用户开启音乐，切章不重播，暂停与继续保持播放位置', async ({ page }) => {
   await page.goto('/')
+  await expect(page.locator('audio')).toHaveCount(1)
+  await expect(page.locator('audio')).toHaveAttribute('preload', 'none')
+  await expect(page.locator('audio')).toHaveAttribute('src', `/${c.music.src}`)
   await expect(page.locator('audio')).toHaveJSProperty('paused', true)
   await page.getByRole('button', { name: c.ui.open, exact: true }).click()
   await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
+  // 由浏览器实际解码新 MP3；防止下载到错误页或空音频仍通过资源状态检查。
+  await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.duration)).toBeGreaterThan(100)
+  expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.duration)).toBeLessThan(180)
   await page.waitForTimeout(600)
   const start = await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)
   await page.getByRole('button', { name: `4. ${c.navigation[3]}`, exact: true }).click()
@@ -82,6 +88,18 @@ test('用户开启音乐，切章不重播，暂停与继续保持播放位置',
   await page.getByRole('button', { name: c.ui.play, exact: true }).click()
   await expect(page.locator('audio')).toHaveJSProperty('paused', false)
   expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThanOrEqual(paused)
+})
+
+test('音乐授权署名在结尾可见，作者和许可链接完整', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await page.getByRole('button', { name: `7. ${c.navigation[6]}`, exact: true }).click()
+  const credit = page.locator('.music-credit')
+  await credit.scrollIntoViewIfNeeded()
+  await expect(credit).toBeVisible()
+  await expect(credit).toContainText('Solo Acoustic #3 · Jason Shaw / Audionautix')
+  await expect(credit.getByRole('link', { name: /Solo Acoustic/ })).toHaveAttribute('href', 'https://audionautix.com/free-music/acoustic')
+  await expect(credit.getByRole('link', { name: 'CC BY 4.0', exact: true })).toHaveAttribute('href', 'https://creativecommons.org/licenses/by/4.0/')
 })
 
 test('拒绝音频播放后邀请函继续可用', async ({ page }) => {

@@ -40,6 +40,6 @@ export const invitation = {
   },
   event: { kicker: 'YOU ARE INVITED', title: '诚挚邀请您', subtitle: '共赴旧唱片一周年之约', fields: { date: '日期', time: '时间', venue: '地点', address: '地址' }, date: '10 月 28 日', time: '21:00', venue: '旧唱片江景民谣四楼', address: eventAddress, navigationUrl, copy: ['这一晚，', '我们不只庆祝一周年，', '也想和一路同行的朋友，', '再喝一杯，再听一首歌。'], closing: '期待您的到来。', ticketTitle: '老友入场券', ticketNumber: 'NO. 0001', addressLabel: '相聚的地方' },
   ending: { kicker: 'SIDE B / THE NEXT RECORD', anniversary: '1周年', title: '故事未完，', lines: ['下一面唱片，', '继续与你一起播放。'], english: 'THANK YOU FOR BEING WITH US.', dateLabel: '周年日期', signoff: '留一个位置，给老朋友。' },
-  music: { src: 'assets/audio/background.wav', label: '原创合成吉他氛围 · Demo', enabled: true, volume: 0.3 },
+  music: { src: 'assets/audio/solo-acoustic-3-jason-shaw.mp3', label: 'Solo Acoustic #3 · Jason Shaw', enabled: true, volume: 0.24, credit: { label: '背景音乐', title: 'Solo Acoustic #3', artist: 'Jason Shaw / Audionautix', sourceUrl: 'https://audionautix.com/free-music/acoustic', license: 'CC BY 4.0', licenseUrl: 'https://creativecommons.org/licenses/by/4.0/' } },
   share: { title: '旧唱片｜1周年庆电子邀请函', description: '10月28日 · 旧唱片一周年；诚邀你来赴一场关于音乐、旧唱片与江景的周年之约。', coverSubtitle: '1周年庆电子邀请函', image: 'share-cover-wechat.jpg', imageAlt: '旧唱片｜1周年庆电子邀请函，10月28日，复古黑胶唱片封套', imageWidth: 1200, imageHeight: 630, imageType: 'image/jpeg', siteUrl: 'https://vmc6g8p2tk-lab.github.io/jiuchangpian-anniversary/' },
 } as const

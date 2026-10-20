@@ -40,7 +40,7 @@ BrandLogo 用于顶部、首页和结尾；按原唱片封套版面展示客户�
 
 建议图片1200px内、150–250KB。运行 `node scripts/optimize-images.mjs`，配置 webp/avif，picture 保留原图回退；图片 lazy loading，不使用大图 base64。
 
-音乐放 public/assets/audio/，修改 music.src、volume、enabled；格式与扩展名必须一致，建议 MP3/AAC。目前 background.wav 仍为合成 Demo，待客户授权音频。点击开启邀请/音乐按钮后尝试播放，切章不重播，暂停续播保留位置，失败不阻断浏览。
+音乐放 public/assets/audio/，修改 music.src、volume、enabled 和 credit。当前接入 Jason Shaw / Audionautix 的《Solo Acoustic #3》，按 CC BY 4.0 署名授权用于商业 H5；结尾保留来源和许可链接，授权记录见 [docs/MUSIC_LICENSE.md](docs/MUSIC_LICENSE.md)。原作者 MP3 本地托管，旧 background.wav Demo 不再引用。点击首页“翻开这一年”/音乐按钮后加载并尝试播放，切章不重播，暂停续播保留位置，失败不阻断浏览。换曲需同步核验授权和更新署名。
 
 ## 分享图和微信
 

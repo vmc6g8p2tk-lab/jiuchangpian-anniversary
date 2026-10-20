@@ -202,5 +202,9 @@
 .cover-ticket small{white-space:normal;line-height:1.6}
 @media(max-height:740px){.cover-quote h2{font-size:25px;line-height:1.5}.cover-ticket>div>span{font-size:8px;letter-spacing:.3px}}
 
+/* 随曲目发布的署名；完整信息与许可链接保持可读、可访问。 */
+.music-credit{position:relative;z-index:1;max-width:100%;margin:18px auto 0;font:11px/1.8 var(--sans);letter-spacing:0;color:var(--paper-muted);text-align:center;overflow-wrap:anywhere}
+.music-credit a{text-decoration:underline;text-underline-offset:3px}
+
 /* 深旧黄纸底下，辅助印刷文字同步压深，照片和 Logo 不改色。 */
 .activities-brand,.activities-subtitle,.activity-prizes dt,.event-ticket dt,.ticket-header small,.ticket-date>span,.location-heading p,.archive-number,.gallery-hint,.photo-caption,.handwritten,.chapter-foot,.cover-ticket>div>span,.cover-ticket small{color:var(--paper-muted)}
