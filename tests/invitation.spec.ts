@@ -120,6 +120,7 @@ test('浏览器允许时进入即实际播放；手动暂停后微信就绪和�
     await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
     await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(0)
     await expect(page.locator('audio')).toHaveCount(1)
+    await expect(page.locator('audio')).toHaveJSProperty('autoplay', true)
     await expect(page.locator('audio')).toHaveJSProperty('playbackRate', 0.95)
     await expect(page.locator('audio')).toHaveJSProperty('preservesPitch', true)
     await page.getByRole('button', { name: c.ui.pause, exact: true }).click()
@@ -142,6 +143,7 @@ test('浏览器真实拦截自动播放时提示可读，首次触碰页面即�
     await page.goto(baseURL!)
     await expect(page.getByRole('status')).toContainText(c.ui.autoplayBlocked)
     await expect(page.locator('audio')).toHaveJSProperty('paused', true)
+    await expect(page.locator('audio')).toHaveJSProperty('autoplay', false)
     await expect(page.getByRole('button', { name: c.ui.play, exact: true })).toHaveAttribute('aria-pressed', 'false')
     await page.locator('.cover h1').click()
     await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
@@ -210,6 +212,8 @@ for (const count of [1, 3, 5]) {
   test(`相册 ${count} 张：按钮、键盘循环和焦点返回`, async ({ page }) => {
     await page.goto(`/tests/fixtures/gallery.html?count=${count}`)
     await expect(page.locator('.archive-item')).toHaveCount(count)
+    const widths = await page.locator('.archive-item').evaluateAll(items => items.map(item => item.getBoundingClientRect().width))
+    for (const width of widths) expect(Math.abs(width - widths[0])).toBeLessThan(1)
     const first = page.getByRole('button', { name: '测试照片 1', exact: true })
     await first.click()
     await expect(page.getByRole('dialog')).toHaveAttribute('aria-label', '测试照片 1')
@@ -395,6 +399,52 @@ test('客户实景照片：七张全部加载、无占位标签、灯箱逐张�
     await page.getByRole('button', { name: c.ui.next, exact: true }).click()
   }
   await expect(page.getByRole('dialog')).toHaveAttribute('aria-label', c.gallery.photos[0].caption)
+})
+
+test('客户相册版图：四种手机尺寸等宽双列、末张居中、照片说明完整', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  await page.evaluate(() => document.fonts.ready)
+  for (const photo of await page.locator('.gallery img').all()) {
+    await photo.scrollIntoViewIfNeeded()
+    await expect(photo).toHaveJSProperty('complete', true)
+    expect(await photo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+  }
+  for (const [width, height] of [[375, 667], [390, 844], [430, 844], [390, 667]]) {
+    await page.setViewportSize({ width, height })
+    const layout = await page.locator('.gallery').evaluate(gallery => {
+      const items = [...gallery.querySelectorAll('.archive-item')]
+      return items.map(item => {
+        const card = item.querySelector('.polaroid')!
+        const caption = item.querySelector('.photo-caption')!
+        const photo = item.querySelector('.photo-image')!
+        const box = item.getBoundingClientRect()
+        const cardBox = card.getBoundingClientRect()
+        const captionBox = caption.getBoundingClientRect()
+        const photoBox = photo.getBoundingClientRect()
+        return { x: box.x, y: box.y, width: box.width, right: box.right,
+          transform: getComputedStyle(card).transform, ratio: photoBox.width / photoBox.height,
+          captionInside: captionBox.left >= cardBox.left && captionBox.right <= cardBox.right && captionBox.bottom <= cardBox.bottom,
+          captionFits: caption.scrollWidth <= caption.clientWidth && caption.scrollHeight <= caption.clientHeight }
+      })
+    })
+    expect(layout).toHaveLength(7)
+    for (const item of layout) {
+      expect(Math.abs(item.width - layout[0].width)).toBeLessThan(1)
+      expect(item.transform).toBe('none')
+      expect(item.ratio).toBeCloseTo(1.9, 1)
+      expect(item.captionInside && item.captionFits).toBe(true)
+      expect(item.x).toBeGreaterThanOrEqual(0)
+      expect(item.right).toBeLessThanOrEqual(width)
+    }
+    for (let row = 0; row < 3; row++) expect(Math.abs(layout[row * 2].y - layout[row * 2 + 1].y)).toBeLessThan(1)
+    expect(layout[6].x + layout[6].width / 2).toBeCloseTo(width / 2, 0)
+    await page.getByRole('button', { name: '3. 旧唱片的夜晚', exact: true }).click()
+    await page.locator('.archive-item').last().scrollIntoViewIfNeeded()
+    await expect(page.locator('.archive-item').last()).toBeInViewport()
+    await mkdir('artifacts/gallery-reference-update', { recursive: true })
+    await page.locator('.gallery').screenshot({ path: `artifacts/gallery-reference-update/${width}-${height}-gallery.png`, animations: 'disabled' })
+  }
 })
 
 test('禁用网页 JavaScript 时，初始 HTML 仍提供分享元数据', async ({ browser }) => {

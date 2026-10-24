@@ -12,16 +12,20 @@ export function useInvitationMusic() {
     const audio = audioRef.current
     if (!audio || !c.music.enabled || pendingRef.current) return
     if (source !== 'user' && userPausedRef.current) return
+    // 原生 autoplay 可能先于 effect 启动；仍须应用客户确认的音量与保调速度。
+    audio.volume = c.music.volume
+    audio.defaultPlaybackRate = c.music.playbackRate
+    audio.playbackRate = c.music.playbackRate
+    audio.preservesPitch = true
     if (!audio.paused) return
     userPausedRef.current = false
     pendingRef.current = true
     setPending(true)
     setMessage('')
-    audio.volume = c.music.volume
-    audio.defaultPlaybackRate = c.music.playbackRate
-    audio.playbackRate = c.music.playbackRate
-    audio.preservesPitch = true
     try { await audio.play() } catch (error) {
+      // 拒绝后关闭原生自动重试，避免迟到的播放与失败提示、用户暂停意图冲突。
+      // 微信宿主就绪或后续用户操作仍通过同一个 play() 重试。
+      audio.autoplay = false
       setPlaying(false)
       const blocked = error instanceof DOMException && error.name === 'NotAllowedError'
       setMessage(source === 'automatic' && blocked ? c.ui.autoplayBlocked : c.ui.musicFailed)
@@ -58,6 +62,7 @@ export function useInvitationMusic() {
     if (pendingRef.current) return
     if (playing) {
       userPausedRef.current = true
+      if (audioRef.current) audioRef.current.autoplay = false
       audioRef.current?.pause()
       setMessage('')
     } else { void play() }
