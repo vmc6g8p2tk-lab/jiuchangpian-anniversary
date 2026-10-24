@@ -18,6 +18,9 @@ export function useInvitationMusic() {
     setPending(true)
     setMessage('')
     audio.volume = c.music.volume
+    audio.defaultPlaybackRate = c.music.playbackRate
+    audio.playbackRate = c.music.playbackRate
+    audio.preservesPitch = true
     try { await audio.play() } catch (error) {
       setPlaying(false)
       const blocked = error instanceof DOMException && error.name === 'NotAllowedError'

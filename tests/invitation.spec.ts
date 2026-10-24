@@ -85,10 +85,21 @@ test('用户开启音乐，切章不重播，暂停与继续保持播放位置',
   // 由浏览器实际解码新 MP3；防止下载到错误页或空音频仍通过资源状态检查。
   await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.duration)).toBeGreaterThan(100)
   expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.duration)).toBeLessThan(180)
-  await page.waitForTimeout(600)
+  await expect(page.locator('audio')).toHaveJSProperty('playbackRate', 0.95)
+  await expect(page.locator('audio')).toHaveJSProperty('defaultPlaybackRate', 0.95)
+  await expect(page.locator('audio')).toHaveJSProperty('preservesPitch', true)
+  const actualRate = await page.locator('audio').evaluate(async (audio: HTMLAudioElement) => {
+    const start = audio.currentTime
+    const startedAt = performance.now()
+    await new Promise(resolve => setTimeout(resolve, 2100))
+    return (audio.currentTime - start) / ((performance.now() - startedAt) / 1000)
+  })
+  expect(actualRate).toBeGreaterThan(0.9)
+  expect(actualRate).toBeLessThan(0.99)
   const start = await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)
   await page.getByRole('button', { name: `4. ${c.navigation[3]}`, exact: true }).click()
   expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThanOrEqual(start)
+  await expect(page.locator('audio')).toHaveJSProperty('playbackRate', 0.95)
   await page.getByRole('button', { name: c.ui.pause, exact: true }).click()
   await expect(page.locator('audio')).toHaveJSProperty('paused', true)
   await expect(page.locator('.mini-record')).not.toHaveClass(/is-spinning/)
@@ -96,6 +107,7 @@ test('用户开启音乐，切章不重播，暂停与继续保持播放位置',
   await page.getByRole('button', { name: c.ui.play, exact: true }).click()
   await expect(page.locator('audio')).toHaveJSProperty('paused', false)
   expect(await page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThanOrEqual(paused)
+  await expect(page.locator('audio')).toHaveJSProperty('playbackRate', 0.95)
 })
 
 test('浏览器允许时进入即实际播放；手动暂停后微信就绪和翻页不抢播', async ({ baseURL }) => {
@@ -108,6 +120,8 @@ test('浏览器允许时进入即实际播放；手动暂停后微信就绪和�
     await expect(page.getByRole('button', { name: c.ui.pause, exact: true })).toHaveAttribute('aria-pressed', 'true')
     await expect.poll(() => page.locator('audio').evaluate((audio: HTMLAudioElement) => audio.currentTime)).toBeGreaterThan(0)
     await expect(page.locator('audio')).toHaveCount(1)
+    await expect(page.locator('audio')).toHaveJSProperty('playbackRate', 0.95)
+    await expect(page.locator('audio')).toHaveJSProperty('preservesPitch', true)
     await page.getByRole('button', { name: c.ui.pause, exact: true }).click()
     await page.evaluate(() => document.dispatchEvent(new Event('WeixinJSBridgeReady')))
     await page.getByRole('button', { name: c.ui.open, exact: true }).click()
@@ -162,6 +176,7 @@ test('音乐授权署名在结尾可见，作者和许可链接完整', async ({
   await credit.scrollIntoViewIfNeeded()
   await expect(credit).toBeVisible()
   await expect(credit).toContainText('Solo Acoustic #3 · Jason Shaw / Audionautix')
+  await expect(credit).toContainText('0.95倍速播放')
   await expect(credit.getByRole('link', { name: /Solo Acoustic/ })).toHaveAttribute('href', 'https://audionautix.com/free-music/acoustic')
   await expect(credit.getByRole('link', { name: 'CC BY 4.0', exact: true })).toHaveAttribute('href', 'https://creativecommons.org/licenses/by/4.0/')
 })

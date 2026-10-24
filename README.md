@@ -40,7 +40,7 @@ BrandLogo 用于顶部、首页和结尾；按原唱片封套版面展示客户�
 
 建议图片1200px内、150–250KB。运行 `node scripts/optimize-images.mjs`，配置 webp/avif，picture 保留原图回退；图片 lazy loading，不使用大图 base64。
 
-音乐放 public/assets/audio/，修改 music.src、volume、enabled、autoplay 和 credit。当前接入 Jason Shaw / Audionautix 的《Solo Acoustic #3》，按 CC BY 4.0 署名授权用于商业 H5；结尾保留来源和许可链接，授权记录见 [docs/MUSIC_LICENSE.md](docs/MUSIC_LICENSE.md)。原作者 MP3 本地托管，旧 background.wav Demo 不再引用。autoplay=true 时进入页面主动尝试播放，并在微信宿主就绪时补充一次尝试；浏览器拒绝有声自动播放时显示提示，首次触碰页面或点击音乐按钮可重试。手动暂停后翻页、首页开启按钮和微信就绪事件不会抢播，只有主动点击唱片恢复。切章不重播，暂停续播保留位置，失败不阻断浏览。不保证所有微信/iOS允许零操作自动出声。换曲需同步核验授权和更新署名。
+音乐放 public/assets/audio/，修改 music.src、volume、playbackRate、enabled、autoplay 和 credit。当前接入 Jason Shaw / Audionautix 的《Solo Acoustic #3》，按 CC BY 4.0 署名授权用于商业 H5；结尾保留来源和许可链接，授权记录见 [docs/MUSIC_LICENSE.md](docs/MUSIC_LICENSE.md)。原作者 MP3 本地托管，旧 background.wav Demo 不再引用。当前 playbackRate=0.95，慢5%并请求保留音高，不修改原MP3；调整倍率同步更新credit.playbackNote。autoplay=true 时进入页面主动尝试播放，并在微信宿主就绪时补充一次尝试；浏览器拒绝有声自动播放时显示提示，首次触碰页面或点击音乐按钮可重试。手动暂停后翻页、首页开启按钮和微信就绪事件不会抢播，只有主动点击唱片恢复。切章不重播，暂停续播保留位置，失败不阻断浏览。不保证所有微信/iOS允许零操作自动出声。换曲需同步核验授权和更新署名。
 
 ## 分享图和微信
 

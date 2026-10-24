@@ -9,7 +9,8 @@ Legal code: https://creativecommons.org/licenses/by/4.0/legalcode.en
 Retrieved: 2026-10-20
 
 Music by Jason Shaw / Audionautix. Used under CC BY 4.0.
-The original MP3 is unchanged. Playback uses reduced volume and looping.
+The original MP3 is unchanged. Playback uses reduced volume, looping,
+and 0.95x speed with pitch preservation requested in the browser.
 File: solo-acoustic-3-jason-shaw.mp3
 Size: 5089138 bytes
 SHA-256: ba6f3e1c034dc6816061494071d09ce734c4674a59929e3765d83d7a849b5cbd
